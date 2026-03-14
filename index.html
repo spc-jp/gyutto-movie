@@ -1,226 +1,865 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <!-- 文字化けを防ぐための設定 -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ギュッと！ムービー</title>
-    
-    <!-- Tailwind CSS (デザイン用) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- React と Babel (アプリを動かすための仕組み) -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>ギュッと！ムービー</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+/* ===== ANIMATED BACKGROUND ===== */
+body{
+  min-height:100vh;
+  font-family:'Noto Sans JP',sans-serif;
+  overflow-x:hidden;
+  position:relative;
+}
+.bg-canvas{
+  position:fixed;inset:0;z-index:0;
+  background:#0d0d1a;
+  overflow:hidden;
+}
+.orb{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(80px);
+  opacity:.55;
+  animation:float 12s ease-in-out infinite;
+}
+.orb1{width:420px;height:420px;background:#7c3aed;top:-100px;left:-120px;animation-delay:0s}
+.orb2{width:380px;height:380px;background:#db2777;top:30%;right:-100px;animation-delay:-4s}
+.orb3{width:340px;height:340px;background:#0ea5e9;bottom:-80px;left:10%;animation-delay:-8s}
+.orb4{width:260px;height:260px;background:#f59e0b;bottom:20%;right:5%;animation-delay:-2s;opacity:.3}
+@keyframes float{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-40px) scale(1.08)}
+}
+
+/* ===== APP SHELL ===== */
+.app{
+  position:relative;z-index:1;
+  max-width:480px;margin:0 auto;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  padding-bottom:48px;
+}
+
+/* ===== GLASS MIXIN ===== */
+.glass{
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(20px) saturate(1.4);
+  -webkit-backdrop-filter:blur(20px) saturate(1.4);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:20px;
+}
+.glass-strong{
+  background:rgba(255,255,255,.13);
+  backdrop-filter:blur(32px) saturate(1.6);
+  -webkit-backdrop-filter:blur(32px) saturate(1.6);
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:20px;
+}
+
+/* ===== HEADER ===== */
+.hdr{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 20px;
+  background:rgba(13,13,26,.45);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.hdr-logo{display:flex;align-items:center;gap:10px}
+.hdr-icon{
+  width:36px;height:36px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#7c3aed,#db2777);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  box-shadow:0 4px 16px rgba(124,58,237,.5);
+}
+.hdr-title{
+  font-size:17px;font-weight:900;color:#fff;
+  letter-spacing:.04em;
+}
+.hdr-pill{
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:.12em;
+  padding:4px 10px;border-radius:100px;
+  background:linear-gradient(135deg,#7c3aed,#db2777);
+  color:#fff;font-weight:700;
+  box-shadow:0 2px 10px rgba(124,58,237,.4);
+}
+
+/* ===== PROGRESS ===== */
+.progress{
+  display:flex;gap:6px;padding:14px 20px;
+  background:rgba(13,13,26,.3);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.prog-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.prog-bar{
+  height:3px;width:100%;border-radius:100px;
+  background:rgba(255,255,255,.12);
+  transition:background .4s;
+}
+.prog-step.active .prog-bar{background:linear-gradient(90deg,#7c3aed,#db2777)}
+.prog-step.done .prog-bar{background:#34d399}
+.prog-lbl{
+  font-family:'Space Mono',monospace;font-size:9px;
+  color:rgba(255,255,255,.3);transition:color .3s;
+}
+.prog-step.active .prog-lbl{color:#c084fc;font-weight:700}
+.prog-step.done .prog-lbl{color:#34d399}
+
+/* ===== CONTENT ===== */
+.content{
+  flex:1;padding:24px 20px;
+  display:flex;flex-direction:column;gap:16px;
+}
+
+/* ===== SECTION LABEL ===== */
+.slabel{
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);margin-bottom:8px;
+}
+
+/* ===== STEP 1 ===== */
+.upload-hero{
+  padding:44px 24px 36px;
+  text-align:center;cursor:pointer;
+  transition:transform .2s,background .2s;
+}
+.upload-hero:active{transform:scale(.98);background:rgba(255,255,255,.16)}
+.hero-ring{
+  width:88px;height:88px;border-radius:50%;margin:0 auto 18px;
+  background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(219,39,119,.3));
+  border:2px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:40px;
+  box-shadow:0 0 40px rgba(124,58,237,.3);
+  animation:glow 3s ease-in-out infinite;
+}
+@keyframes glow{
+  0%,100%{box-shadow:0 0 40px rgba(124,58,237,.3)}
+  50%{box-shadow:0 0 60px rgba(219,39,119,.4)}
+}
+.hero-title{font-size:19px;font-weight:900;color:#fff;margin-bottom:8px}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.5);line-height:1.7}
+
+.features{display:flex;flex-direction:column;gap:2px}
+.feat-row{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 16px;
+  border-radius:12px;
+  font-size:13px;color:rgba(255,255,255,.75);
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+}
+.feat-row .fi{font-size:18px;min-width:26px;text-align:center}
+
+/* ===== BUTTONS ===== */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:17px;border-radius:100px;border:none;
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:15px;font-weight:900;cursor:pointer;
+  letter-spacing:.05em;
+  transition:transform .15s,opacity .15s,box-shadow .15s;
+  -webkit-user-select:none;user-select:none;
+}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-grad{
+  background:linear-gradient(135deg,#7c3aed,#db2777);
+  color:#fff;
+  box-shadow:0 6px 24px rgba(124,58,237,.45);
+}
+.btn-grad:hover{box-shadow:0 8px 32px rgba(124,58,237,.6)}
+.btn-glass{
+  background:rgba(255,255,255,.1);
+  color:rgba(255,255,255,.8);
+  border:1px solid rgba(255,255,255,.15);
+  backdrop-filter:blur(10px);
+}
+.btn-green{
+  background:linear-gradient(135deg,#059669,#34d399);
+  color:#fff;
+  box-shadow:0 6px 20px rgba(52,211,153,.4);
+}
+.btn-sm{padding:13px;font-size:13px}
+
+/* ===== VIDEO PREVIEW ===== */
+.video-wrap{
+  position:relative;width:100%;
+  aspect-ratio:9/16;max-height:320px;
+  background:rgba(0,0,0,.6);
+  border-radius:16px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+.video-wrap video{width:100%;height:100%;object-fit:contain}
+.vid-badge{
+  position:absolute;bottom:10px;right:10px;
+  background:rgba(0,0,0,.65);
+  backdrop-filter:blur(8px);
+  color:#fff;
+  font-family:'Space Mono',monospace;font-size:11px;
+  padding:4px 10px;border-radius:100px;
+  border:1px solid rgba(255,255,255,.1);
+}
+.play-overlay{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.25);cursor:pointer;
+  transition:opacity .2s;
+}
+.play-circle{
+  width:58px;height:58px;border-radius:50%;
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(12px);
+  border:2px solid rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;color:#fff;
+  box-shadow:0 4px 20px rgba(0,0,0,.3);
+}
+
+/* ===== TRIM ===== */
+.trim-info{
+  display:flex;justify-content:space-between;margin-bottom:16px;
+}
+.tval{text-align:center}
+.tval .v{
+  font-family:'Space Mono',monospace;font-size:15px;font-weight:700;
+  background:linear-gradient(135deg,#c084fc,#f472b6);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.tval .l{font-size:10px;color:rgba(255,255,255,.35);margin-top:3px}
+
+.trim-slider-wrap{
+  position:relative;height:52px;touch-action:none;margin:0 6px;
+}
+.trim-rail{
+  position:absolute;top:22px;left:0;right:0;
+  height:8px;border-radius:100px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.06);
+}
+.trim-fill{
+  position:absolute;top:22px;height:8px;border-radius:100px;
+  background:linear-gradient(90deg,#7c3aed,#db2777);
+  box-shadow:0 0 12px rgba(124,58,237,.5);
+  pointer-events:none;
+}
+.trim-thumb{
+  position:absolute;top:10px;
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.95);
+  border:2.5px solid rgba(124,58,237,.8);
+  box-shadow:0 2px 12px rgba(124,58,237,.5);
+  transform:translateX(-50%);
+  cursor:grab;touch-action:none;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;color:#7c3aed;
+  -webkit-user-select:none;user-select:none;
+}
+.trim-thumb:active{cursor:grabbing;background:linear-gradient(135deg,#ede9fe,#fce7f3)}
+.trim-ticks{
+  display:flex;justify-content:space-between;padding:0 4px;margin-top:4px;
+}
+.ttick{font-size:9px;color:rgba(255,255,255,.25);font-family:'Space Mono',monospace}
+
+/* ===== DURATION CHIPS ===== */
+.chip-row{display:flex;gap:8px}
+.dur-chip{
+  flex:1;padding:12px 4px;border-radius:12px;
+  background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.45);
+  font-size:14px;font-weight:700;cursor:pointer;text-align:center;
+  font-family:'Noto Sans JP',sans-serif;
+  transition:all .2s;-webkit-user-select:none;user-select:none;
+}
+.dur-chip.on{
+  background:linear-gradient(135deg,rgba(124,58,237,.35),rgba(219,39,119,.35));
+  border-color:rgba(192,132,252,.6);color:#e9d5ff;
+}
+
+/* ===== CATEGORY ===== */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cat-card{
+  padding:14px 8px;border-radius:14px;text-align:center;cursor:pointer;
+  background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(255,255,255,.08);
+  transition:all .2s;-webkit-user-select:none;user-select:none;
+}
+.cat-card:active{transform:scale(.95)}
+.cat-card.on{
+  background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(219,39,119,.25));
+  border-color:rgba(192,132,252,.5);
+  box-shadow:0 4px 16px rgba(124,58,237,.2);
+}
+.cat-icon{font-size:24px;display:block;margin-bottom:5px}
+.cat-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.7)}
+.cat-card.on .cat-lbl{color:#e9d5ff}
+
+/* ===== API KEY ===== */
+.api-details{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:16px;overflow:hidden;
+}
+.api-details summary{
+  padding:14px 16px;cursor:pointer;
+  font-size:13px;font-weight:700;color:rgba(255,255,255,.6);
+  display:flex;align-items:center;gap:8px;
+  list-style:none;-webkit-user-select:none;user-select:none;
+}
+.api-details summary::-webkit-details-marker{display:none}
+.api-details[open]{background:rgba(255,255,255,.07)}
+.api-details[open] summary{
+  border-bottom:1px solid rgba(255,255,255,.08);
+  color:rgba(255,255,255,.85);
+}
+.api-inner{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.api-key-input{
+  width:100%;
+  background:rgba(0,0,0,.3);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;color:#fff;
+  padding:12px 14px;font-size:12px;
+  font-family:'Space Mono',monospace;
+  outline:none;transition:border-color .2s;
+}
+.api-key-input:focus{border-color:rgba(192,132,252,.6)}
+.api-key-input::placeholder{color:rgba(255,255,255,.2)}
+.api-note{
+  font-size:11px;color:rgba(255,255,255,.4);line-height:1.7;
+  padding:10px 12px;border-radius:8px;
+  background:rgba(255,255,255,.04);
+  border-left:2px solid rgba(192,132,252,.5);
+}
+
+/* ===== PROCESSING ===== */
+.proc-center{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:24px;min-height:45vh;
+}
+.proc-ring{
+  width:68px;height:68px;border-radius:50%;
+  border:3px solid rgba(255,255,255,.08);
+  border-top-color:#c084fc;
+  animation:spin .75s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.proc-msg{
+  font-size:13px;color:rgba(255,255,255,.4);
+  font-family:'Space Mono',monospace;text-align:center;
+}
+.proc-steps{width:100%;display:flex;flex-direction:column;gap:8px}
+.proc-item{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;border-radius:14px;
+  background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.07);
+  font-size:13px;color:rgba(255,255,255,.3);
+  transition:all .35s;
+}
+.proc-item.active{
+  background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(219,39,119,.15));
+  border-color:rgba(192,132,252,.4);color:#e9d5ff;
+}
+.proc-item.done{
+  border-color:rgba(52,211,153,.4);color:#34d399;
+  background:rgba(52,211,153,.06);
+}
+.pi{font-size:18px;min-width:24px}
+
+/* ===== DONE ===== */
+.done-hero{
+  padding:32px 20px 24px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.done-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(192,132,252,.15),transparent 70%);
+  pointer-events:none;
+}
+.done-big{font-size:54px;display:block;margin-bottom:10px}
+.done-h2{font-size:22px;font-weight:900;color:#fff;margin-bottom:6px}
+.done-sub{font-size:13px;color:rgba(255,255,255,.45);line-height:1.6}
+
+.caption-card{overflow:hidden}
+.caption-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.04);
+}
+.cap-head-lbl{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.15em;text-transform:uppercase;
+  background:linear-gradient(90deg,#c084fc,#f472b6);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;font-weight:700;
+}
+.copy-btn{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.5);
+  font-size:11px;padding:5px 12px;border-radius:100px;
+  cursor:pointer;font-family:'Noto Sans JP',sans-serif;
+  transition:all .2s;
+}
+.copy-btn:active{background:rgba(52,211,153,.2);border-color:#34d399;color:#34d399}
+.caption-body{padding:16px}
+.cap-text{
+  font-size:14px;line-height:1.85;color:rgba(255,255,255,.85);
+  white-space:pre-wrap;margin-bottom:10px;
+}
+.hash-text{font-size:13px;color:#818cf8;line-height:2}
+
+.share-list{display:flex;flex-direction:column;gap:10px}
+.btn-tiktok{
+  background:rgba(0,0,0,.6);color:#fff;
+  border:1px solid rgba(255,255,255,.12);border-radius:100px;
+  padding:16px;font-size:15px;font-weight:700;
+  font-family:'Noto Sans JP',sans-serif;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  backdrop-filter:blur(8px);transition:background .2s;
+}
+.btn-tiktok:active{background:rgba(0,0,0,.8)}
+.btn-insta{
+  background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+  color:#fff;border:none;border-radius:100px;
+  padding:16px;font-size:15px;font-weight:700;
+  font-family:'Noto Sans JP',sans-serif;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.reset-link{
+  text-align:center;font-size:13px;
+  color:rgba(255,255,255,.3);cursor:pointer;padding:8px;
+  background:none;border:none;
+  font-family:'Noto Sans JP',sans-serif;width:100%;
+}
+
+/* ===== TOAST ===== */
+.toast{
+  position:fixed;bottom:32px;left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:rgba(20,20,40,.85);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.15);
+  color:#fff;font-size:13px;font-weight:700;
+  padding:12px 24px;border-radius:100px;
+  opacity:0;pointer-events:none;
+  transition:all .3s;z-index:999;white-space:nowrap;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+canvas{display:none}
+</style>
 </head>
 <body>
-    <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useRef } = React;
+<!-- Animated BG -->
+<div class="bg-canvas">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="orb orb4"></div>
+</div>
 
-        // --- アイコンコンポーネント（Lucideアイコンの代わり） ---
-        const Icon = ({ children, size = 24, className = "" }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                {children}
-            </svg>
-        );
-        const Upload = (props) => <Icon {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></Icon>;
-        const Video = (props) => <Icon {...props}><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></Icon>;
-        const Scissors = (props) => <Icon {...props}><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></Icon>;
-        const Music = (props) => <Icon {...props}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></Icon>;
-        const CheckCircle2 = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></Icon>;
-        const Loader2 = (props) => <Icon {...props}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></Icon>;
-        const Play = (props) => <Icon {...props}><polygon points="5 3 19 12 5 21 5 3"/></Icon>;
-        // --------------------------------------------------------
+<div class="app">
 
-        function App() {
-            const [step, setStep] = useState(1);
-            const [videoFile, setVideoFile] = useState(null);
-            const [videoUrl, setVideoUrl] = useState('');
-            const [duration, setDuration] = useState(15);
-            const [isProcessing, setIsProcessing] = useState(false);
-            const [isDone, setIsDone] = useState(false);
-            
-            const videoRef = useRef(null);
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-logo">
+      <div class="hdr-icon">🎬</div>
+      <div class="hdr-title">ギュッと！ムービー</div>
+    </div>
+    <div class="hdr-pill">PREMIUM</div>
+  </div>
 
-            // 動画ファイル選択時の処理
-            const handleVideoUpload = (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    setVideoFile(file);
-                    setVideoUrl(URL.createObjectURL(file));
-                    setStep(2); // 次のステップへ
-                }
-            };
+  <!-- PROGRESS -->
+  <div class="progress">
+    <div class="prog-step active" id="dot1"><div class="prog-bar"></div><div class="prog-lbl">動画</div></div>
+    <div class="prog-step" id="dot2"><div class="prog-bar"></div><div class="prog-lbl">編集</div></div>
+    <div class="prog-step" id="dot3"><div class="prog-bar"></div><div class="prog-lbl">生成</div></div>
+    <div class="prog-step" id="dot4"><div class="prog-bar"></div><div class="prog-lbl">完成</div></div>
+  </div>
 
-            // 生成ボタンを押した時の処理（今回はモックなのでダミーの待機時間）
-            const handleGenerate = () => {
-                setIsProcessing(true);
-                // 3秒後に完了したことにする
-                setTimeout(() => {
-                    setIsProcessing(false);
-                    setIsDone(true);
-                    setStep(3);
-                }, 3000);
-            };
+  <!-- CONTENT -->
+  <div class="content">
 
-            // 最初からやり直す
-            const handleReset = () => {
-                setStep(1);
-                setVideoFile(null);
-                setVideoUrl('');
-                setIsDone(false);
-            };
+    <!-- STEP 1 -->
+    <div id="step1">
+      <div class="glass-strong upload-hero" id="uploadCard">
+        <div class="hero-ring">🎥</div>
+        <div class="hero-title">動画を選択</div>
+        <div class="hero-sub">長い動画でOK！<br/>最高の瞬間だけギュッと切り出します</div>
+      </div>
+      <input type="file" id="fileInput" accept="video/*" style="display:none" onchange="handleUpload(event)"/>
 
-            return (
-                <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 font-sans">
-                    {/* スマホ画面を模したコンテナ */}
-                    <div className="w-full max-w-sm bg-white rounded-[2rem] shadow-2xl overflow-hidden border-8 border-gray-900 relative h-[800px] flex flex-col">
-                        
-                        {/* ヘッダー */}
-                        <div className="bg-gradient-to-r from-purple-600 to-pink-500 text-white p-4 text-center">
-                            <h1 className="text-xl font-bold tracking-wider">ギュッと！ムービー</h1>
-                            <p className="text-xs opacity-80">1タップで日常をバズらせよう</p>
-                        </div>
+      <div class="features glass">
+        <div class="feat-row"><span class="fi">✂️</span>スライダーで直感トリミング</div>
+        <div class="feat-row"><span class="fi">📝</span>業種別キャプション自動生成</div>
+        <div class="feat-row"><span class="fi">📱</span>TikTok・Instagramにすぐシェア</div>
+      </div>
 
-                        {/* メインコンテンツエリア */}
-                        <div className="flex-1 overflow-y-auto p-6 flex flex-col">
-                            
-                            {/* STEP 1: 動画の選択 */}
-                            {step === 1 && (
-                                <div className="flex-1 flex flex-col items-center justify-center space-y-6">
-                                    <div className="w-32 h-32 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                                        <Video size={48} className="text-purple-600" />
-                                    </div>
-                                    <h2 className="text-xl font-bold text-gray-800 text-center">動画を選んでください</h2>
-                                    <p className="text-sm text-gray-500 text-center">長回しした動画でOK！<br/>一番いいところを自動で抽出します。</p>
-                                    
-                                    <label className="mt-8 w-full bg-purple-600 hover:bg-purple-700 text-white rounded-full py-4 px-6 flex items-center justify-center cursor-pointer transition-colors shadow-lg">
-                                        <Upload size={20} className="mr-2" />
-                                        <span className="font-bold">カメラロールから選択</span>
-                                        <input 
-                                            type="file" 
-                                            accept="video/mp4,video/x-m4v,video/*" 
-                                            className="hidden" 
-                                            onChange={handleVideoUpload}
-                                        />
-                                    </label>
-                                </div>
-                            )}
+      <button class="btn btn-grad" onclick="document.getElementById('fileInput').click()">
+        📂 動画を選択する
+      </button>
+    </div>
 
-                            {/* STEP 2: 設定と生成 */}
-                            {step === 2 && (
-                                <div className="flex-1 flex flex-col space-y-6">
-                                    {/* 動画プレビュー */}
-                                    <div className="relative w-full aspect-[9/16] bg-black rounded-xl overflow-hidden shadow-inner">
-                                        {videoUrl && (
-                                            <video 
-                                                ref={videoRef}
-                                                src={videoUrl} 
-                                                className="w-full h-full object-cover"
-                                                controls
-                                            />
-                                        )}
-                                    </div>
+    <!-- STEP 2 -->
+    <div id="step2" style="display:none;flex-direction:column;gap:16px">
 
-                                    {/* 設定パネル */}
-                                    <div className="bg-gray-100 rounded-xl p-4 space-y-4">
-                                        <div>
-                                            <p className="text-sm font-bold text-gray-700 mb-2 flex items-center">
-                                                <Scissors size={16} className="mr-1"/> 長さを選ぶ
-                                            </p>
-                                            <div className="flex space-x-2">
-                                                <button 
-                                                    onClick={() => setDuration(15)}
-                                                    className={`flex-1 py-2 rounded-lg font-bold transition-colors ${duration === 15 ? 'bg-purple-600 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}
-                                                >
-                                                    15秒
-                                                </button>
-                                                <button 
-                                                    onClick={() => setDuration(30)}
-                                                    className={`flex-1 py-2 rounded-lg font-bold transition-colors ${duration === 30 ? 'bg-purple-600 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}
-                                                >
-                                                    30秒
-                                                </button>
-                                            </div>
-                                        </div>
+      <div>
+        <div class="slabel">プレビュー</div>
+        <div class="video-wrap">
+          <video id="previewVid" playsinline webkit-playsinline muted></video>
+          <div class="vid-badge" id="vidBadge">0:00.0</div>
+          <div class="play-overlay" id="playOverlay" onclick="togglePlay()">
+            <div class="play-circle" id="playIcon">▶</div>
+          </div>
+        </div>
+      </div>
 
-                                        <div className="space-y-2">
-                                            <p className="text-sm font-bold text-gray-700 flex items-center">
-                                                <Music size={16} className="mr-1"/> おまかせ編集（準備中）
-                                            </p>
-                                            <div className="flex items-center text-sm text-gray-500 bg-white p-2 rounded-lg border border-gray-200 opacity-60">
-                                                <CheckCircle2 size={16} className="mr-2 text-green-500" /> AIハイライト抽出
-                                            </div>
-                                            <div className="flex items-center text-sm text-gray-500 bg-white p-2 rounded-lg border border-gray-200 opacity-60">
-                                                <CheckCircle2 size={16} className="mr-2 text-green-500" /> BGMビートシンク
-                                            </div>
-                                        </div>
-                                    </div>
+      <div class="glass" style="padding:18px 16px">
+        <div class="slabel">✂ トリミング範囲</div>
+        <div class="trim-info">
+          <div class="tval"><div class="v" id="startVal">0.0s</div><div class="l">開始</div></div>
+          <div class="tval"><div class="v" id="durVal">—</div><div class="l">長さ</div></div>
+          <div class="tval"><div class="v" id="endVal">—</div><div class="l">終了</div></div>
+        </div>
+        <div class="trim-slider-wrap" id="trimWrap">
+          <div class="trim-rail"></div>
+          <div class="trim-fill" id="trimFill"></div>
+          <div class="trim-thumb" id="thumbStart" data-handle="start">◀</div>
+          <div class="trim-thumb" id="thumbEnd" data-handle="end">▶</div>
+        </div>
+        <div class="trim-ticks" id="trimTicks"></div>
+      </div>
 
-                                    {/* 生成ボタン */}
-                                    <button 
-                                        onClick={handleGenerate}
-                                        disabled={isProcessing}
-                                        className="w-full bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white rounded-full py-4 font-bold text-lg flex items-center justify-center shadow-lg transition-all transform hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100"
-                                    >
-                                        {isProcessing ? (
-                                            <>
-                                                <Loader2 size={24} className="mr-2 animate-spin" />
-                                                AIが編集中...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Play size={24} className="mr-2 fill-current" />
-                                                魔法のショート動画を作る
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
-                            )}
+      <div>
+        <div class="slabel">⏱ 目標の長さ</div>
+        <div class="chip-row">
+          <div class="dur-chip on" onclick="setDur(15,this)">15秒</div>
+          <div class="dur-chip" onclick="setDur(30,this)">30秒</div>
+          <div class="dur-chip" onclick="setDur(60,this)">60秒</div>
+        </div>
+      </div>
 
-                            {/* STEP 3: 完成画面 */}
-                            {step === 3 && (
-                                <div className="flex-1 flex flex-col items-center justify-center space-y-6">
-                                    <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-2">
-                                        <CheckCircle2 size={48} className="text-green-500" />
-                                    </div>
-                                    <h2 className="text-2xl font-bold text-gray-800">完成しました！</h2>
-                                    <p className="text-gray-600 text-center">
-                                        あなたの日常が<br/><span className="font-bold text-purple-600">{duration}秒</span>の素敵な動画になりました。
-                                    </p>
+      <div>
+        <div class="slabel">🏷 業種・カテゴリ</div>
+        <div class="cat-grid">
+          <div class="cat-card on" onclick="setCat('飲食',this)"><span class="cat-icon">🍽</span><span class="cat-lbl">飲食</span></div>
+          <div class="cat-card" onclick="setCat('美容',this)"><span class="cat-icon">💄</span><span class="cat-lbl">美容</span></div>
+          <div class="cat-card" onclick="setCat('製造',this)"><span class="cat-icon">🏭</span><span class="cat-lbl">製造業</span></div>
+          <div class="cat-card" onclick="setCat('日常',this)"><span class="cat-icon">🌸</span><span class="cat-lbl">日常</span></div>
+          <div class="cat-card" onclick="setCat('ビジネス',this)"><span class="cat-icon">💼</span><span class="cat-lbl">ビジネス</span></div>
+          <div class="cat-card" onclick="setCat('その他',this)"><span class="cat-icon">✨</span><span class="cat-lbl">その他</span></div>
+        </div>
+      </div>
 
-                                    <div className="w-full space-y-3 mt-8">
-                                        <button className="w-full bg-black text-white rounded-full py-3 font-bold flex items-center justify-center">
-                                            📱 デバイスに保存
-                                        </button>
-                                        <button className="w-full bg-[#FE2C55] text-white rounded-full py-3 font-bold flex items-center justify-center">
-                                            🎵 TikTokでシェア
-                                        </button>
-                                        <button className="w-full bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 text-white rounded-full py-3 font-bold flex items-center justify-center">
-                                            📸 Instagramでシェア
-                                        </button>
-                                        
-                                        <button 
-                                            onClick={handleReset}
-                                            className="w-full mt-4 text-gray-500 font-bold py-2"
-                                        >
-                                            最初からやり直す
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-                            
-                        </div>
-                    </div>
-                </div>
-            );
-        }
+      <details class="api-details" id="apiDetails">
+        <summary>🤖 AIキャプション強化（任意・APIキー）</summary>
+        <div class="api-inner">
+          <input type="password" class="api-key-input" id="apiKeyInput" placeholder="sk-ant-..."/>
+          <div class="api-note">APIキーなしでも業種別テンプレートでキャプションを生成します。キーはブラウザ内にのみ保持されます。</div>
+        </div>
+      </details>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+      <button class="btn btn-grad" onclick="startProcess()">✨ ショート動画を作る！</button>
+      <button class="btn btn-glass btn-sm" onclick="goStep(1)">← 動画を選び直す</button>
+    </div>
+
+    <!-- STEP 3 -->
+    <div id="step3" style="display:none;flex-direction:column;gap:16px">
+      <div class="proc-center">
+        <div class="proc-ring"></div>
+        <div class="proc-msg" id="procMsg">動画を処理しています...</div>
+      </div>
+      <div class="proc-steps">
+        <div class="proc-item" id="pi1"><span class="pi">✂️</span>動画をトリミング中</div>
+        <div class="proc-item" id="pi2"><span class="pi">📝</span>キャプションを生成中</div>
+        <div class="proc-item" id="pi3"><span class="pi">📦</span>ファイルを準備中</div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div id="step4" style="display:none;flex-direction:column;gap:14px">
+
+      <div class="glass-strong done-hero">
+        <span class="done-big">🎉</span>
+        <div class="done-h2">完成しました！</div>
+        <div class="done-sub" id="doneMsg">動画が完成しました</div>
+      </div>
+
+      <div class="glass caption-card">
+        <div class="caption-head">
+          <span class="cap-head-lbl">AI生成キャプション</span>
+          <button class="copy-btn" onclick="copyCaption()">📋 コピー</button>
+        </div>
+        <div class="caption-body">
+          <div class="cap-text" id="capText"></div>
+          <div class="hash-text" id="hashText"></div>
+        </div>
+      </div>
+
+      <div class="share-list">
+        <button class="btn btn-green" id="dlBtn" onclick="doDownload()">⬇️ 動画をダウンロード</button>
+        <button class="btn-tiktok">🎵 TikTokでシェア</button>
+        <button class="btn-insta">📸 Instagramでシェア</button>
+      </div>
+
+      <button class="reset-link" onclick="goStep(1)">← 最初からやり直す</button>
+    </div>
+
+  </div>
+</div>
+
+<canvas id="cvs"></canvas>
+<div class="toast" id="toast"></div>
+
+<script>
+// STATE
+let vidFile=null,vidDur=0,trimStart=0,trimEnd=15;
+let targetDur=15,selCat='飲食';
+let trimmedBlob=null,genCaption='',genHash='';
+let isPlaying=false;
+
+// NAV
+function goStep(n){
+  [1,2,3,4].forEach(i=>{
+    const el=document.getElementById('step'+i);
+    el.style.display=i===n?'flex':'none';
+    if(i===n) el.style.flexDirection='column';
+  });
+  for(let i=1;i<=4;i++){
+    const d=document.getElementById('dot'+i);
+    d.className='prog-step'+(i<n?' done':i===n?' active':'');
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// UPLOAD
+document.getElementById('uploadCard').onclick=()=>document.getElementById('fileInput').click();
+function handleUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  vidFile=file;
+  const url=URL.createObjectURL(file);
+  const vid=document.getElementById('previewVid');
+  vid.src=url;
+  vid.onloadedmetadata=()=>{
+    vidDur=vid.duration;
+    trimStart=0;trimEnd=Math.min(targetDur,vidDur);
+    buildTicks();renderTrim();
+    goStep(2);vid.currentTime=0;
+  };
+  vid.ontimeupdate=()=>{
+    document.getElementById('vidBadge').textContent=fmt(vid.currentTime);
+    if(vid.currentTime>=trimEnd){vid.pause();vid.currentTime=trimStart;isPlaying=false;updPlay();}
+  };
+}
+function fmt(s){const m=Math.floor(s/60),sc=(s%60).toFixed(1);return m+':'+(sc<10?'0':'')+sc;}
+
+function togglePlay(){
+  const v=document.getElementById('previewVid');
+  if(v.paused){v.currentTime=trimStart;v.play();isPlaying=true;}
+  else{v.pause();isPlaying=false;}
+  updPlay();
+}
+function updPlay(){
+  document.getElementById('playIcon').textContent=isPlaying?'⏸':'▶';
+  document.getElementById('playOverlay').style.opacity=isPlaying?'0':'1';
+}
+document.getElementById('previewVid').addEventListener('play',()=>{isPlaying=true;updPlay();});
+document.getElementById('previewVid').addEventListener('pause',()=>{isPlaying=false;updPlay();});
+
+// TICKS
+function buildTicks(){
+  const w=document.getElementById('trimTicks');w.innerHTML='';
+  for(let i=0;i<5;i++){
+    const t=vidDur*(i/4);
+    const s=document.createElement('span');
+    s.className='ttick';s.textContent=fmt(t);w.appendChild(s);
+  }
+}
+
+// TRIM RENDER
+function renderTrim(){
+  const ps=(trimStart/vidDur)*100,pe=(trimEnd/vidDur)*100;
+  document.getElementById('trimFill').style.left=ps+'%';
+  document.getElementById('trimFill').style.width=(pe-ps)+'%';
+  document.getElementById('thumbStart').style.left=ps+'%';
+  document.getElementById('thumbEnd').style.left=pe+'%';
+  document.getElementById('startVal').textContent=trimStart.toFixed(1)+'s';
+  document.getElementById('endVal').textContent=trimEnd.toFixed(1)+'s';
+  document.getElementById('durVal').textContent=(trimEnd-trimStart).toFixed(1)+'s';
+}
+
+// DRAG
+(function(){
+  let drag=null;
+  function getX(e){return e.touches?e.touches[0].clientX:e.clientX;}
+  function onDown(e){
+    drag=e.currentTarget.dataset.handle;
+    if(e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  }
+  function onMove(e){
+    if(!drag)return;e.preventDefault();
+    const wrap=document.getElementById('trimWrap');
+    const rect=wrap.getBoundingClientRect();
+    const ratio=Math.max(0,Math.min(1,(getX(e)-rect.left)/rect.width));
+    const t=ratio*vidDur;
+    if(drag==='start') trimStart=Math.max(0,Math.min(t,trimEnd-.5));
+    else trimEnd=Math.min(vidDur,Math.max(t,trimStart+.5));
+    renderTrim();
+    const v=document.getElementById('previewVid');
+    v.pause();isPlaying=false;updPlay();
+    v.currentTime=drag==='start'?trimStart:trimEnd-.1;
+  }
+  function onUp(){drag=null;}
+  ['thumbStart','thumbEnd'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.addEventListener('pointerdown',onDown,{passive:false});
+    el.addEventListener('touchstart',onDown,{passive:false});
+  });
+  document.addEventListener('pointermove',onMove,{passive:false});
+  document.addEventListener('pointerup',onUp);
+  document.addEventListener('touchmove',onMove,{passive:false});
+  document.addEventListener('touchend',onUp);
+})();
+
+function setDur(s,el){
+  targetDur=s;
+  document.querySelectorAll('.dur-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  trimEnd=Math.min(trimStart+s,vidDur);renderTrim();
+}
+function setCat(c,el){
+  selCat=c;
+  document.querySelectorAll('.cat-card').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// PROCESS
+async function startProcess(){
+  goStep(3);setPI(1,'active');
+  try{trimmedBlob=await doTrim();}catch(e){trimmedBlob=null;}
+  setPI(1,'done');setPI(2,'active');
+  const key=document.getElementById('apiKeyInput').value.trim();
+  if(key){
+    try{const r=await claudeCap(key);genCaption=r.caption;genHash=r.hashtags;}
+    catch{genCaption=fbCap();genHash=fbHash();}
+  }else{await new Promise(r=>setTimeout(r,800));genCaption=fbCap();genHash=fbHash();}
+  setPI(2,'done');setPI(3,'active');
+  await new Promise(r=>setTimeout(r,600));
+  setPI(3,'done');
+  await new Promise(r=>setTimeout(r,350));
+  showDone();
+}
+function setPI(n,s){document.getElementById('pi'+n).className='proc-item '+s;}
+
+// TRIM (MediaRecorder)
+function doTrim(){
+  return new Promise((res,rej)=>{
+    const vid=document.getElementById('previewVid');
+    const cvs=document.getElementById('cvs');
+    cvs.width=vid.videoWidth||720;cvs.height=vid.videoHeight||1280;
+    const ctx=cvs.getContext('2d');
+    let stream;try{stream=cvs.captureStream(30);}catch(e){rej(e);return;}
+    const mime=MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+      ?'video/webm;codecs=vp9':MediaRecorder.isTypeSupported('video/webm')
+      ?'video/webm':'video/mp4';
+    let rec;try{rec=new MediaRecorder(stream,{mimeType:mime});}catch(e){rej(e);return;}
+    const chunks=[];
+    rec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
+    rec.onstop=()=>res(new Blob(chunks,{type:mime}));
+    vid.muted=true;vid.playbackRate=1;
+    let raf;
+    function draw(){
+      if(vid.currentTime>=trimEnd||vid.ended){vid.pause();cancelAnimationFrame(raf);rec.stop();return;}
+      ctx.drawImage(vid,0,0,cvs.width,cvs.height);raf=requestAnimationFrame(draw);
+    }
+    vid.onseeked=()=>{rec.start();vid.play();draw();};
+    vid.currentTime=trimStart;
+  });
+}
+
+// CLAUDE API
+async function claudeCap(key){
+  const dur=(trimEnd-trimStart).toFixed(1);
+  const p=`SNSマーケターとして以下の条件でTikTok・Reels向け日本語キャプションをJSONのみで出力してください。\n業種:${selCat} 動画:${dur}秒\n{"caption":"2〜3行（絵文字入り）","hashtags":"#タグ1 #タグ2 #タグ3 #タグ4 #タグ5"}`;
+  const r=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:p}]})
+  });
+  if(!r.ok)throw new Error(r.status);
+  const d=await r.json();
+  return JSON.parse(d.content[0].text.replace(/```json|```/g,'').trim());
+}
+
+// FALLBACKS
+const CAPS={
+  '飲食':{cap:'今日も美味しいものを作りました😋\nこだわりの一皿、ぜひ食べに来てください！',hash:'#グルメ #飲食店 #おいしい #ランチ #ショート動画'},
+  '美容':{cap:'今日のスタイリングをご紹介✂️✨\nご予約お待ちしています！',hash:'#美容室 #ヘアスタイル #サロン #おしゃれ #ビューティー'},
+  '製造':{cap:'職人の技、ここにあり🔧\n毎日の積み重ねが最高の品質を生む。',hash:'#製造業 #ものづくり #職人 #技術 #メイドインジャパン'},
+  '日常':{cap:'何気ない日常が、実は一番たいせつ🌸\nこんな毎日が好きです。',hash:'#日常vlog #暮らし #ゆるい日常 #日記 #ショート'},
+  'ビジネス':{cap:'仕事の現場から💪\n小さな積み重ねが、大きな変化を生みます。',hash:'#ビジネス #仕事 #中小企業 #成長記録 #毎日投稿'},
+  'その他':{cap:'この瞬間をみんなにシェアしたくて📱✨\nぜひ最後まで見てください！',hash:'#ショート動画 #バズれ #シェア #毎日投稿 #おすすめ'}
+};
+function fbCap(){return(CAPS[selCat]||CAPS['その他']).cap;}
+function fbHash(){return(CAPS[selCat]||CAPS['その他']).hash;}
+
+// DONE
+function showDone(){
+  goStep(4);
+  document.getElementById('capText').textContent=genCaption;
+  document.getElementById('hashText').textContent=genHash;
+  document.getElementById('doneMsg').textContent=`${selCat}向け ${(trimEnd-trimStart).toFixed(1)}秒動画が完成 🎬`;
+  const btn=document.getElementById('dlBtn');
+  btn.disabled=!trimmedBlob;
+  if(!trimmedBlob)btn.textContent='⚠ このブラウザではDL非対応';
+}
+
+// DOWNLOAD
+function doDownload(){
+  if(!trimmedBlob)return;
+  const ext=trimmedBlob.type.includes('mp4')?'mp4':'webm';
+  const url=URL.createObjectURL(trimmedBlob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`gyutto_${Date.now()}.${ext}`;a.click();
+  URL.revokeObjectURL(url);
+  toast('✅ ダウンロード開始！');
+}
+
+// COPY
+function copyCaption(){
+  navigator.clipboard.writeText(genCaption+'\n\n'+genHash).then(()=>toast('📋 コピーしました！'));
+}
+
+// TOAST
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+goStep(1);
+</script>
 </body>
 </html>
