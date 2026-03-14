@@ -8,462 +8,167 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--purple:#7c3aed;--pink:#db2777;--blue:#0ea5e9;--amber:#f59e0b;--green:#10b981}
 
-/* ===== ANIMATED BACKGROUND ===== */
-body{
-  min-height:100vh;
-  font-family:'Noto Sans JP',sans-serif;
-  overflow-x:hidden;
-  position:relative;
-}
-.bg-canvas{
-  position:fixed;inset:0;z-index:0;
-  background:#0d0d1a;
-  overflow:hidden;
-}
-.orb{
-  position:absolute;
-  border-radius:50%;
-  filter:blur(80px);
-  opacity:.55;
-  animation:float 12s ease-in-out infinite;
-}
-.orb1{width:420px;height:420px;background:#7c3aed;top:-100px;left:-120px;animation-delay:0s}
-.orb2{width:380px;height:380px;background:#db2777;top:30%;right:-100px;animation-delay:-4s}
-.orb3{width:340px;height:340px;background:#0ea5e9;bottom:-80px;left:10%;animation-delay:-8s}
-.orb4{width:260px;height:260px;background:#f59e0b;bottom:20%;right:5%;animation-delay:-2s;opacity:.3}
-@keyframes float{
-  0%,100%{transform:translateY(0) scale(1)}
-  50%{transform:translateY(-40px) scale(1.08)}
-}
+body{min-height:100vh;font-family:'Noto Sans JP',sans-serif;overflow-x:hidden;}
 
-/* ===== APP SHELL ===== */
-.app{
-  position:relative;z-index:1;
-  max-width:480px;margin:0 auto;
-  min-height:100vh;
-  display:flex;flex-direction:column;
-  padding-bottom:48px;
-}
+/* BG */
+.bg{position:fixed;inset:0;z-index:0;background:#0d0d1a;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;animation:fl 12s ease-in-out infinite}
+.o1{width:400px;height:400px;background:#7c3aed;top:-80px;left:-100px;animation-delay:0s}
+.o2{width:360px;height:360px;background:#db2777;top:35%;right:-80px;animation-delay:-4s}
+.o3{width:320px;height:320px;background:#0ea5e9;bottom:-60px;left:5%;animation-delay:-8s}
+.o4{width:240px;height:240px;background:#f59e0b;bottom:25%;right:0;animation-delay:-2s;opacity:.25}
+@keyframes fl{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-36px) scale(1.07)}}
 
-/* ===== GLASS MIXIN ===== */
-.glass{
-  background:rgba(255,255,255,.08);
-  backdrop-filter:blur(20px) saturate(1.4);
-  -webkit-backdrop-filter:blur(20px) saturate(1.4);
-  border:1px solid rgba(255,255,255,.18);
-  border-radius:20px;
-}
-.glass-strong{
-  background:rgba(255,255,255,.13);
-  backdrop-filter:blur(32px) saturate(1.6);
-  -webkit-backdrop-filter:blur(32px) saturate(1.6);
-  border:1px solid rgba(255,255,255,.22);
-  border-radius:20px;
-}
+/* APP */
+.app{position:relative;z-index:1;max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding-bottom:50px}
 
-/* ===== HEADER ===== */
-.hdr{
-  position:sticky;top:0;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:18px 20px;
-  background:rgba(13,13,26,.45);
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
-  border-bottom:1px solid rgba(255,255,255,.1);
-}
-.hdr-logo{display:flex;align-items:center;gap:10px}
-.hdr-icon{
-  width:36px;height:36px;
-  border-radius:12px;
-  background:linear-gradient(135deg,#7c3aed,#db2777);
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;
-  box-shadow:0 4px 16px rgba(124,58,237,.5);
-}
-.hdr-title{
-  font-size:17px;font-weight:900;color:#fff;
-  letter-spacing:.04em;
-}
-.hdr-pill{
-  font-family:'Space Mono',monospace;
-  font-size:9px;letter-spacing:.12em;
-  padding:4px 10px;border-radius:100px;
-  background:linear-gradient(135deg,#7c3aed,#db2777);
-  color:#fff;font-weight:700;
-  box-shadow:0 2px 10px rgba(124,58,237,.4);
-}
+/* GLASS */
+.g{background:rgba(255,255,255,.08);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border:1px solid rgba(255,255,255,.16);border-radius:20px}
+.gs{background:rgba(255,255,255,.12);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,.2);border-radius:20px}
 
-/* ===== PROGRESS ===== */
-.progress{
-  display:flex;gap:6px;padding:14px 20px;
-  background:rgba(13,13,26,.3);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  border-bottom:1px solid rgba(255,255,255,.06);
-}
-.prog-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
-.prog-bar{
-  height:3px;width:100%;border-radius:100px;
-  background:rgba(255,255,255,.12);
-  transition:background .4s;
-}
-.prog-step.active .prog-bar{background:linear-gradient(90deg,#7c3aed,#db2777)}
-.prog-step.done .prog-bar{background:#34d399}
-.prog-lbl{
-  font-family:'Space Mono',monospace;font-size:9px;
-  color:rgba(255,255,255,.3);transition:color .3s;
-}
-.prog-step.active .prog-lbl{color:#c084fc;font-weight:700}
-.prog-step.done .prog-lbl{color:#34d399}
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(13,13,26,.5);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,.08)}
+.hl{display:flex;align-items:center;gap:10px}
+.hi{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#7c3aed,#db2777);display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 4px 14px rgba(124,58,237,.5)}
+.ht{font-size:16px;font-weight:900;color:#fff;letter-spacing:.03em}
+.hbadge{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;padding:4px 10px;border-radius:100px;background:linear-gradient(135deg,#7c3aed,#db2777);color:#fff;font-weight:700}
 
-/* ===== CONTENT ===== */
-.content{
-  flex:1;padding:24px 20px;
-  display:flex;flex-direction:column;gap:16px;
-}
+/* PROGRESS */
+.prog{display:flex;gap:6px;padding:12px 20px;background:rgba(13,13,26,.35);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.05)}
+.ps{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.pb{height:3px;width:100%;border-radius:100px;background:rgba(255,255,255,.1);transition:background .4s}
+.ps.active .pb{background:linear-gradient(90deg,#7c3aed,#db2777)}
+.ps.done .pb{background:#10b981}
+.pl{font-family:'Space Mono',monospace;font-size:9px;color:rgba(255,255,255,.25);transition:color .3s}
+.ps.active .pl{color:#c084fc;font-weight:700}
+.ps.done .pl{color:#10b981}
 
-/* ===== SECTION LABEL ===== */
-.slabel{
-  font-family:'Space Mono',monospace;
-  font-size:9px;letter-spacing:.18em;text-transform:uppercase;
-  color:rgba(255,255,255,.4);margin-bottom:8px;
-}
+/* CONTENT */
+.content{flex:1;padding:20px 20px;display:flex;flex-direction:column;gap:14px}
 
-/* ===== STEP 1 ===== */
-.upload-hero{
-  padding:44px 24px 36px;
-  text-align:center;cursor:pointer;
-  transition:transform .2s,background .2s;
-}
-.upload-hero:active{transform:scale(.98);background:rgba(255,255,255,.16)}
-.hero-ring{
-  width:88px;height:88px;border-radius:50%;margin:0 auto 18px;
-  background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(219,39,119,.3));
-  border:2px solid rgba(255,255,255,.2);
-  display:flex;align-items:center;justify-content:center;
-  font-size:40px;
-  box-shadow:0 0 40px rgba(124,58,237,.3);
-  animation:glow 3s ease-in-out infinite;
-}
-@keyframes glow{
-  0%,100%{box-shadow:0 0 40px rgba(124,58,237,.3)}
-  50%{box-shadow:0 0 60px rgba(219,39,119,.4)}
-}
-.hero-title{font-size:19px;font-weight:900;color:#fff;margin-bottom:8px}
-.hero-sub{font-size:13px;color:rgba(255,255,255,.5);line-height:1.7}
+/* LABEL */
+.lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:7px}
 
-.features{display:flex;flex-direction:column;gap:2px}
-.feat-row{
-  display:flex;align-items:center;gap:12px;
-  padding:13px 16px;
-  border-radius:12px;
-  font-size:13px;color:rgba(255,255,255,.75);
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.06);
-}
-.feat-row .fi{font-size:18px;min-width:26px;text-align:center}
-
-/* ===== BUTTONS ===== */
-.btn{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  width:100%;padding:17px;border-radius:100px;border:none;
-  font-family:'Noto Sans JP',sans-serif;
-  font-size:15px;font-weight:900;cursor:pointer;
-  letter-spacing:.05em;
-  transition:transform .15s,opacity .15s,box-shadow .15s;
-  -webkit-user-select:none;user-select:none;
-}
+/* BTN */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:17px;border-radius:100px;border:none;font-family:'Noto Sans JP',sans-serif;font-size:15px;font-weight:900;cursor:pointer;letter-spacing:.05em;transition:transform .15s,box-shadow .15s;-webkit-user-select:none;user-select:none}
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
-.btn-grad{
-  background:linear-gradient(135deg,#7c3aed,#db2777);
-  color:#fff;
-  box-shadow:0 6px 24px rgba(124,58,237,.45);
-}
-.btn-grad:hover{box-shadow:0 8px 32px rgba(124,58,237,.6)}
-.btn-glass{
-  background:rgba(255,255,255,.1);
-  color:rgba(255,255,255,.8);
-  border:1px solid rgba(255,255,255,.15);
-  backdrop-filter:blur(10px);
-}
-.btn-green{
-  background:linear-gradient(135deg,#059669,#34d399);
-  color:#fff;
-  box-shadow:0 6px 20px rgba(52,211,153,.4);
-}
+.btn-g{background:linear-gradient(135deg,#7c3aed,#db2777);color:#fff;box-shadow:0 6px 24px rgba(124,58,237,.45)}
+.btn-gl{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(10px)}
+.btn-gr{background:linear-gradient(135deg,#059669,#34d399);color:#fff;box-shadow:0 6px 20px rgba(16,185,129,.35)}
 .btn-sm{padding:13px;font-size:13px}
+.btn-capcut{background:linear-gradient(135deg,#000,#1a1a2e);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:100px;padding:16px;font-size:15px;font-weight:900;font-family:'Noto Sans JP',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-shadow:0 4px 20px rgba(0,0,0,.4)}
 
-/* ===== VIDEO PREVIEW ===== */
-.video-wrap{
-  position:relative;width:100%;
-  aspect-ratio:9/16;max-height:320px;
-  background:rgba(0,0,0,.6);
-  border-radius:16px;overflow:hidden;
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 8px 32px rgba(0,0,0,.4);
-}
-.video-wrap video{width:100%;height:100%;object-fit:contain}
-.vid-badge{
-  position:absolute;bottom:10px;right:10px;
-  background:rgba(0,0,0,.65);
-  backdrop-filter:blur(8px);
-  color:#fff;
-  font-family:'Space Mono',monospace;font-size:11px;
-  padding:4px 10px;border-radius:100px;
-  border:1px solid rgba(255,255,255,.1);
-}
-.play-overlay{
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(0,0,0,.25);cursor:pointer;
-  transition:opacity .2s;
-}
-.play-circle{
-  width:58px;height:58px;border-radius:50%;
-  background:rgba(255,255,255,.15);
-  backdrop-filter:blur(12px);
-  border:2px solid rgba(255,255,255,.3);
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;color:#fff;
-  box-shadow:0 4px 20px rgba(0,0,0,.3);
-}
+/* STEP 1 */
+.upload-hero{padding:40px 20px 32px;text-align:center;cursor:pointer;transition:transform .2s}
+.upload-hero:active{transform:scale(.98)}
+.hero-ring{width:84px;height:84px;border-radius:50%;margin:0 auto 16px;background:linear-gradient(135deg,rgba(124,58,237,.25),rgba(219,39,119,.25));border:2px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:38px;animation:glow 3s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 36px rgba(124,58,237,.3)}50%{box-shadow:0 0 56px rgba(219,39,119,.4)}}
+.hero-t{font-size:18px;font-weight:900;color:#fff;margin-bottom:6px}
+.hero-s{font-size:13px;color:rgba(255,255,255,.45);line-height:1.7}
 
-/* ===== TRIM ===== */
-.trim-info{
-  display:flex;justify-content:space-between;margin-bottom:16px;
-}
-.tval{text-align:center}
-.tval .v{
-  font-family:'Space Mono',monospace;font-size:15px;font-weight:700;
-  background:linear-gradient(135deg,#c084fc,#f472b6);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;
-}
-.tval .l{font-size:10px;color:rgba(255,255,255,.35);margin-top:3px}
+/* BADGE ROW */
+.badge-row{display:flex;gap:8px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:100px;font-size:11px;font-weight:700;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.badge.green{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.3);color:#34d399}
+.badge.purple{background:rgba(124,58,237,.15);border-color:rgba(124,58,237,.3);color:#c084fc}
 
-.trim-slider-wrap{
-  position:relative;height:52px;touch-action:none;margin:0 6px;
-}
-.trim-rail{
-  position:absolute;top:22px;left:0;right:0;
-  height:8px;border-radius:100px;
-  background:rgba(255,255,255,.1);
-  border:1px solid rgba(255,255,255,.06);
-}
-.trim-fill{
-  position:absolute;top:22px;height:8px;border-radius:100px;
-  background:linear-gradient(90deg,#7c3aed,#db2777);
-  box-shadow:0 0 12px rgba(124,58,237,.5);
-  pointer-events:none;
-}
-.trim-thumb{
-  position:absolute;top:10px;
-  width:32px;height:32px;border-radius:50%;
-  background:rgba(255,255,255,.95);
-  border:2.5px solid rgba(124,58,237,.8);
-  box-shadow:0 2px 12px rgba(124,58,237,.5);
-  transform:translateX(-50%);
-  cursor:grab;touch-action:none;
-  display:flex;align-items:center;justify-content:center;
-  font-size:10px;font-weight:700;color:#7c3aed;
-  -webkit-user-select:none;user-select:none;
-}
-.trim-thumb:active{cursor:grabbing;background:linear-gradient(135deg,#ede9fe,#fce7f3)}
-.trim-ticks{
-  display:flex;justify-content:space-between;padding:0 4px;margin-top:4px;
-}
-.ttick{font-size:9px;color:rgba(255,255,255,.25);font-family:'Space Mono',monospace}
+/* VIDEO */
+.vwrap{position:relative;width:100%;aspect-ratio:9/16;max-height:300px;background:rgba(0,0,0,.6);border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.vwrap video{width:100%;height:100%;object-fit:contain}
+.vbadge{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);color:#fff;font-family:'Space Mono',monospace;font-size:11px;padding:4px 10px;border-radius:100px;border:1px solid rgba(255,255,255,.1)}
+.voverlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.2);cursor:pointer;transition:opacity .2s}
+.vcircle{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:2px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff}
 
-/* ===== DURATION CHIPS ===== */
+/* TRIM */
+.trim-nums{display:flex;justify-content:space-between;margin-bottom:14px}
+.tn{text-align:center}
+.tn .v{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;background:linear-gradient(135deg,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tn .l{font-size:10px;color:rgba(255,255,255,.3);margin-top:2px}
+
+.trim-wrap{position:relative;height:50px;touch-action:none;margin:0 6px}
+.t-rail{position:absolute;top:21px;left:0;right:0;height:8px;border-radius:100px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.05)}
+.t-fill{position:absolute;top:21px;height:8px;border-radius:100px;background:linear-gradient(90deg,#7c3aed,#db2777);box-shadow:0 0 10px rgba(124,58,237,.5);pointer-events:none}
+.t-thumb{position:absolute;top:9px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.95);border:2.5px solid rgba(124,58,237,.8);box-shadow:0 2px 12px rgba(124,58,237,.5);transform:translateX(-50%);cursor:grab;touch-action:none;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#7c3aed;-webkit-user-select:none;user-select:none}
+.t-thumb:active{cursor:grabbing}
+.t-ticks{display:flex;justify-content:space-between;padding:0 4px;margin-top:3px}
+.ttick{font-size:9px;color:rgba(255,255,255,.2);font-family:'Space Mono',monospace}
+
+/* CHIPS */
 .chip-row{display:flex;gap:8px}
-.dur-chip{
-  flex:1;padding:12px 4px;border-radius:12px;
-  background:rgba(255,255,255,.06);
-  border:1.5px solid rgba(255,255,255,.1);
-  color:rgba(255,255,255,.45);
-  font-size:14px;font-weight:700;cursor:pointer;text-align:center;
-  font-family:'Noto Sans JP',sans-serif;
-  transition:all .2s;-webkit-user-select:none;user-select:none;
-}
-.dur-chip.on{
-  background:linear-gradient(135deg,rgba(124,58,237,.35),rgba(219,39,119,.35));
-  border-color:rgba(192,132,252,.6);color:#e9d5ff;
-}
+.chip{flex:1;padding:11px 4px;border-radius:12px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.08);color:rgba(255,255,255,.4);font-size:13px;font-weight:700;cursor:pointer;text-align:center;font-family:'Noto Sans JP',sans-serif;transition:all .2s;-webkit-user-select:none;user-select:none}
+.chip.on{background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(219,39,119,.3));border-color:rgba(192,132,252,.55);color:#e9d5ff}
 
-/* ===== CATEGORY ===== */
+/* CAT */
 .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.cat-card{
-  padding:14px 8px;border-radius:14px;text-align:center;cursor:pointer;
-  background:rgba(255,255,255,.05);
-  border:1.5px solid rgba(255,255,255,.08);
-  transition:all .2s;-webkit-user-select:none;user-select:none;
-}
-.cat-card:active{transform:scale(.95)}
-.cat-card.on{
-  background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(219,39,119,.25));
-  border-color:rgba(192,132,252,.5);
-  box-shadow:0 4px 16px rgba(124,58,237,.2);
-}
-.cat-icon{font-size:24px;display:block;margin-bottom:5px}
-.cat-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.7)}
-.cat-card.on .cat-lbl{color:#e9d5ff}
+.cat{padding:13px 8px;border-radius:14px;text-align:center;cursor:pointer;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.07);transition:all .2s;-webkit-user-select:none;user-select:none}
+.cat:active{transform:scale(.95)}
+.cat.on{background:linear-gradient(135deg,rgba(124,58,237,.28),rgba(219,39,119,.22));border-color:rgba(192,132,252,.48);box-shadow:0 4px 14px rgba(124,58,237,.18)}
+.cat-i{font-size:22px;display:block;margin-bottom:4px}
+.cat-l{font-size:11px;font-weight:700;color:rgba(255,255,255,.6)}
+.cat.on .cat-l{color:#e9d5ff}
 
-/* ===== API KEY ===== */
-.api-details{
-  background:rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:16px;overflow:hidden;
-}
-.api-details summary{
-  padding:14px 16px;cursor:pointer;
-  font-size:13px;font-weight:700;color:rgba(255,255,255,.6);
-  display:flex;align-items:center;gap:8px;
-  list-style:none;-webkit-user-select:none;user-select:none;
-}
+/* API */
+.api-details{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden}
+.api-details summary{padding:13px 16px;cursor:pointer;font-size:13px;font-weight:700;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:8px;list-style:none;-webkit-user-select:none;user-select:none}
 .api-details summary::-webkit-details-marker{display:none}
-.api-details[open]{background:rgba(255,255,255,.07)}
-.api-details[open] summary{
-  border-bottom:1px solid rgba(255,255,255,.08);
-  color:rgba(255,255,255,.85);
-}
-.api-inner{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
-.api-key-input{
-  width:100%;
-  background:rgba(0,0,0,.3);
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:10px;color:#fff;
-  padding:12px 14px;font-size:12px;
-  font-family:'Space Mono',monospace;
-  outline:none;transition:border-color .2s;
-}
-.api-key-input:focus{border-color:rgba(192,132,252,.6)}
-.api-key-input::placeholder{color:rgba(255,255,255,.2)}
-.api-note{
-  font-size:11px;color:rgba(255,255,255,.4);line-height:1.7;
-  padding:10px 12px;border-radius:8px;
-  background:rgba(255,255,255,.04);
-  border-left:2px solid rgba(192,132,252,.5);
-}
+.api-details[open] summary{border-bottom:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.8)}
+.api-in{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.api-input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;padding:12px 14px;font-size:12px;font-family:'Space Mono',monospace;outline:none;transition:border-color .2s}
+.api-input:focus{border-color:rgba(192,132,252,.6)}
+.api-input::placeholder{color:rgba(255,255,255,.18)}
+.api-note{font-size:11px;color:rgba(255,255,255,.35);line-height:1.7;padding:10px 12px;border-radius:8px;background:rgba(255,255,255,.03);border-left:2px solid rgba(192,132,252,.4)}
 
-/* ===== PROCESSING ===== */
-.proc-center{
-  flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  gap:24px;min-height:45vh;
-}
-.proc-ring{
-  width:68px;height:68px;border-radius:50%;
-  border:3px solid rgba(255,255,255,.08);
-  border-top-color:#c084fc;
-  animation:spin .75s linear infinite;
-}
+/* PROC */
+.proc-c{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;min-height:40vh}
+.proc-ring{width:64px;height:64px;border-radius:50%;border:3px solid rgba(255,255,255,.07);border-top-color:#c084fc;animation:spin .75s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.proc-msg{
-  font-size:13px;color:rgba(255,255,255,.4);
-  font-family:'Space Mono',monospace;text-align:center;
-}
-.proc-steps{width:100%;display:flex;flex-direction:column;gap:8px}
-.proc-item{
-  display:flex;align-items:center;gap:12px;
-  padding:14px 16px;border-radius:14px;
-  background:rgba(255,255,255,.04);
-  border:1.5px solid rgba(255,255,255,.07);
-  font-size:13px;color:rgba(255,255,255,.3);
-  transition:all .35s;
-}
-.proc-item.active{
-  background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(219,39,119,.15));
-  border-color:rgba(192,132,252,.4);color:#e9d5ff;
-}
-.proc-item.done{
-  border-color:rgba(52,211,153,.4);color:#34d399;
-  background:rgba(52,211,153,.06);
-}
-.pi{font-size:18px;min-width:24px}
+.proc-msg{font-size:12px;color:rgba(255,255,255,.35);font-family:'Space Mono',monospace;text-align:center}
+.proc-list{width:100%;display:flex;flex-direction:column;gap:8px}
+.pi{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:14px;background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.06);font-size:13px;color:rgba(255,255,255,.25);transition:all .35s}
+.pi.active{background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(219,39,119,.12));border-color:rgba(192,132,252,.38);color:#e9d5ff}
+.pi.done{border-color:rgba(16,185,129,.35);color:#34d399;background:rgba(16,185,129,.05)}
+.pie{font-size:18px;min-width:24px}
 
-/* ===== DONE ===== */
-.done-hero{
-  padding:32px 20px 24px;text-align:center;
-  position:relative;overflow:hidden;
-}
-.done-hero::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 0%,rgba(192,132,252,.15),transparent 70%);
-  pointer-events:none;
-}
-.done-big{font-size:54px;display:block;margin-bottom:10px}
-.done-h2{font-size:22px;font-weight:900;color:#fff;margin-bottom:6px}
-.done-sub{font-size:13px;color:rgba(255,255,255,.45);line-height:1.6}
+/* DONE - 設計図カード */
+.done-head{padding:26px 20px 20px;text-align:center}
+.done-big{font-size:50px;display:block;margin-bottom:8px}
+.done-h{font-size:21px;font-weight:900;color:#fff;margin-bottom:5px}
+.done-s{font-size:13px;color:rgba(255,255,255,.4);line-height:1.6}
 
-.caption-card{overflow:hidden}
-.caption-head{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 16px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-  background:rgba(255,255,255,.04);
-}
-.cap-head-lbl{
-  font-family:'Space Mono',monospace;font-size:9px;
-  letter-spacing:.15em;text-transform:uppercase;
-  background:linear-gradient(90deg,#c084fc,#f472b6);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;font-weight:700;
-}
-.copy-btn{
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.12);
-  color:rgba(255,255,255,.5);
-  font-size:11px;padding:5px 12px;border-radius:100px;
-  cursor:pointer;font-family:'Noto Sans JP',sans-serif;
-  transition:all .2s;
-}
-.copy-btn:active{background:rgba(52,211,153,.2);border-color:#34d399;color:#34d399}
-.caption-body{padding:16px}
-.cap-text{
-  font-size:14px;line-height:1.85;color:rgba(255,255,255,.85);
-  white-space:pre-wrap;margin-bottom:10px;
-}
-.hash-text{font-size:13px;color:#818cf8;line-height:2}
+/* 設計図 */
+.sekkei{overflow:hidden}
+.sekkei-head{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);display:flex;align-items:center;gap:8px}
+.sekkei-icon{font-size:16px}
+.sekkei-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;background:linear-gradient(90deg,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700}
+.sekkei-body{padding:16px;display:flex;flex-direction:column;gap:12px}
 
-.share-list{display:flex;flex-direction:column;gap:10px}
-.btn-tiktok{
-  background:rgba(0,0,0,.6);color:#fff;
-  border:1px solid rgba(255,255,255,.12);border-radius:100px;
-  padding:16px;font-size:15px;font-weight:700;
-  font-family:'Noto Sans JP',sans-serif;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  backdrop-filter:blur(8px);transition:background .2s;
-}
-.btn-tiktok:active{background:rgba(0,0,0,.8)}
-.btn-insta{
-  background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
-  color:#fff;border:none;border-radius:100px;
-  padding:16px;font-size:15px;font-weight:700;
-  font-family:'Noto Sans JP',sans-serif;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
-.reset-link{
-  text-align:center;font-size:13px;
-  color:rgba(255,255,255,.3);cursor:pointer;padding:8px;
-  background:none;border:none;
-  font-family:'Noto Sans JP',sans-serif;width:100%;
-}
+.sekkei-row{display:flex;flex-direction:column;gap:6px}
+.sekkei-label{font-size:10px;color:rgba(255,255,255,.35);font-weight:700;letter-spacing:.08em}
+.sekkei-val{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:#fff;letter-spacing:.04em}
+.sekkei-sub{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px}
 
-/* ===== TOAST ===== */
-.toast{
-  position:fixed;bottom:32px;left:50%;
-  transform:translateX(-50%) translateY(20px);
-  background:rgba(20,20,40,.85);
-  backdrop-filter:blur(20px);
-  border:1px solid rgba(255,255,255,.15);
-  color:#fff;font-size:13px;font-weight:700;
-  padding:12px 24px;border-radius:100px;
-  opacity:0;pointer-events:none;
-  transition:all .3s;z-index:999;white-space:nowrap;
-  box-shadow:0 8px 32px rgba(0,0,0,.4);
-}
+.cap-text{font-size:14px;line-height:1.85;color:rgba(255,255,255,.85);white-space:pre-wrap}
+.hash-text{font-size:13px;color:#818cf8;line-height:2;margin-top:6px}
+
+.copy-btn{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);font-size:11px;padding:5px 12px;border-radius:100px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .2s;margin-top:6px}
+.copy-btn:active{background:rgba(16,185,129,.2);border-color:#10b981;color:#34d399}
+
+/* CapCut手順 */
+.cc-steps{display:flex;flex-direction:column;gap:8px;padding:14px 16px}
+.cc-step{display:flex;align-items:flex-start;gap:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.cc-num{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#db2777);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;margin-top:1px}
+.cc-text{font-size:13px;color:rgba(255,255,255,.7);line-height:1.6}
+.cc-text strong{color:#c084fc;font-weight:700}
+
+.divider{height:1px;background:rgba(255,255,255,.07);margin:0}
+
+.reset-link{text-align:center;font-size:13px;color:rgba(255,255,255,.28);cursor:pointer;padding:8px;background:none;border:none;font-family:'Noto Sans JP',sans-serif;width:100%}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(20,20,40,.88);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:13px;font-weight:700;padding:11px 22px;border-radius:100px;opacity:0;pointer-events:none;transition:all .3s;z-index:999;white-space:nowrap;box-shadow:0 8px 28px rgba(0,0,0,.35)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 canvas{display:none}
@@ -471,353 +176,356 @@ canvas{display:none}
 </head>
 <body>
 
-<!-- Animated BG -->
-<div class="bg-canvas">
-  <div class="orb orb1"></div>
-  <div class="orb orb2"></div>
-  <div class="orb orb3"></div>
-  <div class="orb orb4"></div>
-</div>
+<div class="bg"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="orb o4"></div></div>
 
 <div class="app">
 
   <!-- HEADER -->
   <div class="hdr">
-    <div class="hdr-logo">
-      <div class="hdr-icon">🎬</div>
-      <div class="hdr-title">ギュッと！ムービー</div>
+    <div class="hl">
+      <div class="hi">🎬</div>
+      <div class="ht">ギュッと！ムービー</div>
     </div>
-    <div class="hdr-pill">PREMIUM</div>
+    <div class="hbadge">PREMIUM</div>
   </div>
 
   <!-- PROGRESS -->
-  <div class="progress">
-    <div class="prog-step active" id="dot1"><div class="prog-bar"></div><div class="prog-lbl">動画</div></div>
-    <div class="prog-step" id="dot2"><div class="prog-bar"></div><div class="prog-lbl">編集</div></div>
-    <div class="prog-step" id="dot3"><div class="prog-bar"></div><div class="prog-lbl">生成</div></div>
-    <div class="prog-step" id="dot4"><div class="prog-bar"></div><div class="prog-lbl">完成</div></div>
+  <div class="prog">
+    <div class="ps active" id="d1"><div class="pb"></div><div class="pl">動画</div></div>
+    <div class="ps" id="d2"><div class="pb"></div><div class="pl">設定</div></div>
+    <div class="ps" id="d3"><div class="pb"></div><div class="pl">生成</div></div>
+    <div class="ps" id="d4"><div class="pb"></div><div class="pl">設計図</div></div>
   </div>
 
-  <!-- CONTENT -->
   <div class="content">
 
-    <!-- STEP 1 -->
-    <div id="step1">
-      <div class="glass-strong upload-hero" id="uploadCard">
+    <!-- ===== STEP 1 ===== -->
+    <div id="s1">
+      <div class="gs upload-hero" id="uploadCard">
         <div class="hero-ring">🎥</div>
-        <div class="hero-title">動画を選択</div>
-        <div class="hero-sub">長い動画でOK！<br/>最高の瞬間だけギュッと切り出します</div>
+        <div class="hero-t">動画を選択</div>
+        <div class="hero-s">長い動画でOK！<br/>AIが編集設計図を作ります</div>
       </div>
-      <input type="file" id="fileInput" accept="video/*" style="display:none" onchange="handleUpload(event)"/>
+      <input type="file" id="fileInput" accept="video/*" style="display:none" onchange="onUpload(event)"/>
 
-      <div class="features glass">
-        <div class="feat-row"><span class="fi">✂️</span>スライダーで直感トリミング</div>
-        <div class="feat-row"><span class="fi">📝</span>業種別キャプション自動生成</div>
-        <div class="feat-row"><span class="fi">📱</span>TikTok・Instagramにすぐシェア</div>
+      <div class="badge-row">
+        <span class="badge green">✅ iPhone対応</span>
+        <span class="badge green">✅ Android対応</span>
+        <span class="badge purple">🤖 AI設計図生成</span>
+        <span class="badge purple">📋 CapCut連携</span>
       </div>
 
-      <button class="btn btn-grad" onclick="document.getElementById('fileInput').click()">
-        📂 動画を選択する
-      </button>
+      <div class="g" style="padding:4px 0">
+        <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px;color:rgba(255,255,255,.65)"><span style="font-size:18px">✂️</span>どこを切るか秒数で提案</div>
+        <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px;color:rgba(255,255,255,.65)"><span style="font-size:18px">📝</span>業種別キャプション自動生成</div>
+        <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;font-size:13px;color:rgba(255,255,255,.65)"><span style="font-size:18px">🎬</span>CapCutで仕上げてそのまま投稿</div>
+      </div>
+
+      <button class="btn btn-g" onclick="document.getElementById('fileInput').click()">📂 動画を選択する</button>
     </div>
 
-    <!-- STEP 2 -->
-    <div id="step2" style="display:none;flex-direction:column;gap:16px">
+    <!-- ===== STEP 2 ===== -->
+    <div id="s2" style="display:none;flex-direction:column;gap:14px">
 
       <div>
-        <div class="slabel">プレビュー</div>
-        <div class="video-wrap">
-          <video id="previewVid" playsinline webkit-playsinline muted></video>
-          <div class="vid-badge" id="vidBadge">0:00.0</div>
-          <div class="play-overlay" id="playOverlay" onclick="togglePlay()">
-            <div class="play-circle" id="playIcon">▶</div>
+        <div class="lbl">プレビュー</div>
+        <div class="vwrap">
+          <video id="vid" playsinline webkit-playsinline muted></video>
+          <div class="vbadge" id="vbadge">0:00.0</div>
+          <div class="voverlay" id="voverlay" onclick="togglePlay()">
+            <div class="vcircle" id="vicon">▶</div>
           </div>
         </div>
       </div>
 
-      <div class="glass" style="padding:18px 16px">
-        <div class="slabel">✂ トリミング範囲</div>
-        <div class="trim-info">
-          <div class="tval"><div class="v" id="startVal">0.0s</div><div class="l">開始</div></div>
-          <div class="tval"><div class="v" id="durVal">—</div><div class="l">長さ</div></div>
-          <div class="tval"><div class="v" id="endVal">—</div><div class="l">終了</div></div>
+      <div class="g" style="padding:16px">
+        <div class="lbl">✂ 使いたい範囲を指定</div>
+        <div class="trim-nums">
+          <div class="tn"><div class="v" id="sv">0.0s</div><div class="l">開始</div></div>
+          <div class="tn"><div class="v" id="dv">—</div><div class="l">長さ</div></div>
+          <div class="tn"><div class="v" id="ev">—</div><div class="l">終了</div></div>
         </div>
-        <div class="trim-slider-wrap" id="trimWrap">
-          <div class="trim-rail"></div>
-          <div class="trim-fill" id="trimFill"></div>
-          <div class="trim-thumb" id="thumbStart" data-handle="start">◀</div>
-          <div class="trim-thumb" id="thumbEnd" data-handle="end">▶</div>
+        <div class="trim-wrap" id="tw">
+          <div class="t-rail"></div>
+          <div class="t-fill" id="tf"></div>
+          <div class="t-thumb" id="ts" data-h="s">◀</div>
+          <div class="t-thumb" id="te" data-h="e">▶</div>
         </div>
-        <div class="trim-ticks" id="trimTicks"></div>
+        <div class="t-ticks" id="ticks"></div>
       </div>
 
       <div>
-        <div class="slabel">⏱ 目標の長さ</div>
+        <div class="lbl">⏱ 目標の長さ</div>
         <div class="chip-row">
-          <div class="dur-chip on" onclick="setDur(15,this)">15秒</div>
-          <div class="dur-chip" onclick="setDur(30,this)">30秒</div>
-          <div class="dur-chip" onclick="setDur(60,this)">60秒</div>
+          <div class="chip on" onclick="setDur(15,this)">15秒</div>
+          <div class="chip" onclick="setDur(30,this)">30秒</div>
+          <div class="chip" onclick="setDur(60,this)">60秒</div>
         </div>
       </div>
 
       <div>
-        <div class="slabel">🏷 業種・カテゴリ</div>
+        <div class="lbl">🏷 業種・カテゴリ</div>
         <div class="cat-grid">
-          <div class="cat-card on" onclick="setCat('飲食',this)"><span class="cat-icon">🍽</span><span class="cat-lbl">飲食</span></div>
-          <div class="cat-card" onclick="setCat('美容',this)"><span class="cat-icon">💄</span><span class="cat-lbl">美容</span></div>
-          <div class="cat-card" onclick="setCat('製造',this)"><span class="cat-icon">🏭</span><span class="cat-lbl">製造業</span></div>
-          <div class="cat-card" onclick="setCat('日常',this)"><span class="cat-icon">🌸</span><span class="cat-lbl">日常</span></div>
-          <div class="cat-card" onclick="setCat('ビジネス',this)"><span class="cat-icon">💼</span><span class="cat-lbl">ビジネス</span></div>
-          <div class="cat-card" onclick="setCat('その他',this)"><span class="cat-icon">✨</span><span class="cat-lbl">その他</span></div>
+          <div class="cat on" onclick="setCat('飲食',this)"><span class="cat-i">🍽</span><span class="cat-l">飲食</span></div>
+          <div class="cat" onclick="setCat('美容',this)"><span class="cat-i">💄</span><span class="cat-l">美容</span></div>
+          <div class="cat" onclick="setCat('製造業',this)"><span class="cat-i">🏭</span><span class="cat-l">製造業</span></div>
+          <div class="cat" onclick="setCat('日常',this)"><span class="cat-i">🌸</span><span class="cat-l">日常</span></div>
+          <div class="cat" onclick="setCat('ビジネス',this)"><span class="cat-i">💼</span><span class="cat-l">ビジネス</span></div>
+          <div class="cat" onclick="setCat('その他',this)"><span class="cat-i">✨</span><span class="cat-l">その他</span></div>
         </div>
       </div>
 
-      <details class="api-details" id="apiDetails">
+      <details class="api-details">
         <summary>🤖 AIキャプション強化（任意・APIキー）</summary>
-        <div class="api-inner">
-          <input type="password" class="api-key-input" id="apiKeyInput" placeholder="sk-ant-..."/>
-          <div class="api-note">APIキーなしでも業種別テンプレートでキャプションを生成します。キーはブラウザ内にのみ保持されます。</div>
+        <div class="api-in">
+          <input type="password" class="api-input" id="apiKey" placeholder="sk-ant-...（任意）"/>
+          <div class="api-note">APIキーなしでも業種別テンプレートからキャプションを自動生成します。より自然な文章にしたい場合のみ入力してください。キーはブラウザ内にのみ保持されます。</div>
         </div>
       </details>
 
-      <button class="btn btn-grad" onclick="startProcess()">✨ ショート動画を作る！</button>
-      <button class="btn btn-glass btn-sm" onclick="goStep(1)">← 動画を選び直す</button>
+      <button class="btn btn-g" onclick="startProc()">✨ 編集設計図を生成する</button>
+      <button class="btn btn-gl btn-sm" onclick="goS(1)">← 動画を選び直す</button>
     </div>
 
-    <!-- STEP 3 -->
-    <div id="step3" style="display:none;flex-direction:column;gap:16px">
-      <div class="proc-center">
+    <!-- ===== STEP 3 ===== -->
+    <div id="s3" style="display:none;flex-direction:column;gap:14px">
+      <div class="proc-c">
         <div class="proc-ring"></div>
-        <div class="proc-msg" id="procMsg">動画を処理しています...</div>
+        <div class="proc-msg">AIが設計図を作っています...</div>
       </div>
-      <div class="proc-steps">
-        <div class="proc-item" id="pi1"><span class="pi">✂️</span>動画をトリミング中</div>
-        <div class="proc-item" id="pi2"><span class="pi">📝</span>キャプションを生成中</div>
-        <div class="proc-item" id="pi3"><span class="pi">📦</span>ファイルを準備中</div>
+      <div class="proc-list">
+        <div class="pi" id="pi1"><span class="pie">📐</span>カット範囲を分析中</div>
+        <div class="pi" id="pi2"><span class="pie">📝</span>キャプションを生成中</div>
+        <div class="pi" id="pi3"><span class="pie">📋</span>CapCut手順を作成中</div>
       </div>
     </div>
 
-    <!-- STEP 4 -->
-    <div id="step4" style="display:none;flex-direction:column;gap:14px">
+    <!-- ===== STEP 4：設計図 ===== -->
+    <div id="s4" style="display:none;flex-direction:column;gap:14px">
 
-      <div class="glass-strong done-hero">
-        <span class="done-big">🎉</span>
-        <div class="done-h2">完成しました！</div>
-        <div class="done-sub" id="doneMsg">動画が完成しました</div>
+      <div class="done-head">
+        <span class="done-big">📋</span>
+        <div class="done-h">編集設計図が完成！</div>
+        <div class="done-s" id="doneMsg">この設計図をCapCutに持ち込んでください</div>
       </div>
 
-      <div class="glass caption-card">
-        <div class="caption-head">
-          <span class="cap-head-lbl">AI生成キャプション</span>
-          <button class="copy-btn" onclick="copyCaption()">📋 コピー</button>
+      <!-- カット指示 -->
+      <div class="gs sekkei">
+        <div class="sekkei-head"><span class="sekkei-icon">✂️</span><span class="sekkei-title">カット指示</span></div>
+        <div class="sekkei-body">
+          <div class="sekkei-row">
+            <div class="sekkei-label">使う範囲</div>
+            <div class="sekkei-val" id="cutRange">—</div>
+            <div class="sekkei-sub" id="cutSub">—</div>
+          </div>
+          <div class="sekkei-row">
+            <div class="sekkei-label">目標の長さ</div>
+            <div class="sekkei-val" id="cutDur">—</div>
+          </div>
         </div>
-        <div class="caption-body">
+      </div>
+
+      <!-- キャプション -->
+      <div class="g sekkei">
+        <div class="sekkei-head"><span class="sekkei-icon">📝</span><span class="sekkei-title">投稿キャプション</span></div>
+        <div class="sekkei-body">
           <div class="cap-text" id="capText"></div>
           <div class="hash-text" id="hashText"></div>
+          <button class="copy-btn" onclick="copyAll()">📋 キャプション＋ハッシュタグをコピー</button>
         </div>
       </div>
 
-      <div class="share-list">
-        <button class="btn btn-green" id="dlBtn" onclick="doDownload()">⬇️ 動画をダウンロード</button>
-        <button class="btn-tiktok">🎵 TikTokでシェア</button>
-        <button class="btn-insta">📸 Instagramでシェア</button>
+      <!-- CapCut手順 -->
+      <div class="g" style="overflow:hidden">
+        <div class="sekkei-head"><span class="sekkei-icon">🎬</span><span class="sekkei-title">CapCutでの編集手順</span></div>
+        <div class="cc-steps">
+          <div class="cc-step">
+            <div class="cc-num">1</div>
+            <div class="cc-text">CapCutを開いて「新しいプロジェクト」→ この動画を選択する</div>
+          </div>
+          <div class="cc-step">
+            <div class="cc-num">2</div>
+            <div class="cc-text">タイムラインの動画をタップ →「トリミング」で<strong id="ccRange">—</strong>の部分だけ残す</div>
+          </div>
+          <div class="cc-step">
+            <div class="cc-num">3</div>
+            <div class="cc-text">好みでBGM・テキストを追加して「エクスポート」→ TikTok・Instagramに投稿！</div>
+          </div>
+          <div class="cc-step">
+            <div class="cc-num">4</div>
+            <div class="cc-text">投稿文にコピーしたキャプションを貼り付けて完成🎉</div>
+          </div>
+        </div>
       </div>
 
-      <button class="reset-link" onclick="goStep(1)">← 最初からやり直す</button>
+      <div class="btn-capcut" onclick="openCapCut()">
+        🎬 CapCutを開く
+      </div>
+
+      <button class="reset-link" onclick="goS(1)">← 最初からやり直す</button>
     </div>
 
-  </div>
-</div>
+  </div><!-- /content -->
+</div><!-- /app -->
 
-<canvas id="cvs"></canvas>
 <div class="toast" id="toast"></div>
+<canvas id="cvs"></canvas>
 
 <script>
 // STATE
-let vidFile=null,vidDur=0,trimStart=0,trimEnd=15;
-let targetDur=15,selCat='飲食';
-let trimmedBlob=null,genCaption='',genHash='';
-let isPlaying=false;
+let vidDur=0, trimS=0, trimE=15, targetDur=15, selCat='飲食';
+let genCap='', genHash='', isPlay=false;
 
 // NAV
-function goStep(n){
+function goS(n){
   [1,2,3,4].forEach(i=>{
-    const el=document.getElementById('step'+i);
+    const el=document.getElementById('s'+i);
     el.style.display=i===n?'flex':'none';
-    if(i===n) el.style.flexDirection='column';
+    if(i===n)el.style.flexDirection='column';
   });
   for(let i=1;i<=4;i++){
-    const d=document.getElementById('dot'+i);
-    d.className='prog-step'+(i<n?' done':i===n?' active':'');
+    const d=document.getElementById('d'+i);
+    d.className='ps'+(i<n?' done':i===n?' active':'');
   }
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 // UPLOAD
 document.getElementById('uploadCard').onclick=()=>document.getElementById('fileInput').click();
-function handleUpload(e){
-  const file=e.target.files[0];if(!file)return;
-  vidFile=file;
-  const url=URL.createObjectURL(file);
-  const vid=document.getElementById('previewVid');
-  vid.src=url;
-  vid.onloadedmetadata=()=>{
-    vidDur=vid.duration;
-    trimStart=0;trimEnd=Math.min(targetDur,vidDur);
-    buildTicks();renderTrim();
-    goStep(2);vid.currentTime=0;
+
+function onUpload(e){
+  const f=e.target.files[0]; if(!f)return;
+  const url=URL.createObjectURL(f);
+  const v=document.getElementById('vid');
+  v.src=url;
+  v.onloadedmetadata=()=>{
+    vidDur=v.duration;
+    trimS=0; trimE=Math.min(targetDur,vidDur);
+    buildTicks(); renderTrim();
+    goS(2); v.currentTime=0;
   };
-  vid.ontimeupdate=()=>{
-    document.getElementById('vidBadge').textContent=fmt(vid.currentTime);
-    if(vid.currentTime>=trimEnd){vid.pause();vid.currentTime=trimStart;isPlaying=false;updPlay();}
+  v.ontimeupdate=()=>{
+    document.getElementById('vbadge').textContent=fmt(v.currentTime);
+    if(v.currentTime>=trimE){v.pause();v.currentTime=trimS;isPlay=false;updPlay();}
   };
 }
+
 function fmt(s){const m=Math.floor(s/60),sc=(s%60).toFixed(1);return m+':'+(sc<10?'0':'')+sc;}
+function fmtS(s){return s.toFixed(1)+'秒';}
 
 function togglePlay(){
-  const v=document.getElementById('previewVid');
-  if(v.paused){v.currentTime=trimStart;v.play();isPlaying=true;}
-  else{v.pause();isPlaying=false;}
+  const v=document.getElementById('vid');
+  if(v.paused){v.currentTime=trimS;v.play();isPlay=true;}
+  else{v.pause();isPlay=false;}
   updPlay();
 }
 function updPlay(){
-  document.getElementById('playIcon').textContent=isPlaying?'⏸':'▶';
-  document.getElementById('playOverlay').style.opacity=isPlaying?'0':'1';
+  document.getElementById('vicon').textContent=isPlay?'⏸':'▶';
+  document.getElementById('voverlay').style.opacity=isPlay?'0':'1';
 }
-document.getElementById('previewVid').addEventListener('play',()=>{isPlaying=true;updPlay();});
-document.getElementById('previewVid').addEventListener('pause',()=>{isPlaying=false;updPlay();});
+document.getElementById('vid').addEventListener('play',()=>{isPlay=true;updPlay();});
+document.getElementById('vid').addEventListener('pause',()=>{isPlay=false;updPlay();});
 
 // TICKS
 function buildTicks(){
-  const w=document.getElementById('trimTicks');w.innerHTML='';
+  const w=document.getElementById('ticks'); w.innerHTML='';
   for(let i=0;i<5;i++){
-    const t=vidDur*(i/4);
     const s=document.createElement('span');
-    s.className='ttick';s.textContent=fmt(t);w.appendChild(s);
+    s.className='ttick'; s.textContent=fmt(vidDur*(i/4)); w.appendChild(s);
   }
 }
 
-// TRIM RENDER
+// TRIM
 function renderTrim(){
-  const ps=(trimStart/vidDur)*100,pe=(trimEnd/vidDur)*100;
-  document.getElementById('trimFill').style.left=ps+'%';
-  document.getElementById('trimFill').style.width=(pe-ps)+'%';
-  document.getElementById('thumbStart').style.left=ps+'%';
-  document.getElementById('thumbEnd').style.left=pe+'%';
-  document.getElementById('startVal').textContent=trimStart.toFixed(1)+'s';
-  document.getElementById('endVal').textContent=trimEnd.toFixed(1)+'s';
-  document.getElementById('durVal').textContent=(trimEnd-trimStart).toFixed(1)+'s';
+  const ps=(trimS/vidDur)*100, pe=(trimE/vidDur)*100;
+  document.getElementById('tf').style.left=ps+'%';
+  document.getElementById('tf').style.width=(pe-ps)+'%';
+  document.getElementById('ts').style.left=ps+'%';
+  document.getElementById('te').style.left=pe+'%';
+  document.getElementById('sv').textContent=trimS.toFixed(1)+'s';
+  document.getElementById('ev').textContent=trimE.toFixed(1)+'s';
+  document.getElementById('dv').textContent=(trimE-trimS).toFixed(1)+'s';
 }
 
 // DRAG
-(function(){
+(()=>{
   let drag=null;
-  function getX(e){return e.touches?e.touches[0].clientX:e.clientX;}
-  function onDown(e){
-    drag=e.currentTarget.dataset.handle;
-    if(e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId);
-    e.preventDefault();
-  }
-  function onMove(e){
-    if(!drag)return;e.preventDefault();
-    const wrap=document.getElementById('trimWrap');
-    const rect=wrap.getBoundingClientRect();
-    const ratio=Math.max(0,Math.min(1,(getX(e)-rect.left)/rect.width));
-    const t=ratio*vidDur;
-    if(drag==='start') trimStart=Math.max(0,Math.min(t,trimEnd-.5));
-    else trimEnd=Math.min(vidDur,Math.max(t,trimStart+.5));
+  const gx=e=>e.touches?e.touches[0].clientX:e.clientX;
+  const onD=e=>{drag=e.currentTarget.dataset.h;if(e.currentTarget.setPointerCapture)e.currentTarget.setPointerCapture(e.pointerId);e.preventDefault();};
+  const onM=e=>{
+    if(!drag)return; e.preventDefault();
+    const r=document.getElementById('tw').getBoundingClientRect();
+    const t=Math.max(0,Math.min(1,(gx(e)-r.left)/r.width))*vidDur;
+    if(drag==='s') trimS=Math.max(0,Math.min(t,trimE-.5));
+    else trimE=Math.min(vidDur,Math.max(t,trimS+.5));
     renderTrim();
-    const v=document.getElementById('previewVid');
-    v.pause();isPlaying=false;updPlay();
-    v.currentTime=drag==='start'?trimStart:trimEnd-.1;
-  }
-  function onUp(){drag=null;}
-  ['thumbStart','thumbEnd'].forEach(id=>{
+    const v=document.getElementById('vid'); v.pause(); isPlay=false; updPlay();
+    v.currentTime=drag==='s'?trimS:trimE-.1;
+  };
+  const onU=()=>{drag=null;};
+  ['ts','te'].forEach(id=>{
     const el=document.getElementById(id);
-    el.addEventListener('pointerdown',onDown,{passive:false});
-    el.addEventListener('touchstart',onDown,{passive:false});
+    el.addEventListener('pointerdown',onD,{passive:false});
+    el.addEventListener('touchstart',onD,{passive:false});
   });
-  document.addEventListener('pointermove',onMove,{passive:false});
-  document.addEventListener('pointerup',onUp);
-  document.addEventListener('touchmove',onMove,{passive:false});
-  document.addEventListener('touchend',onUp);
+  document.addEventListener('pointermove',onM,{passive:false});
+  document.addEventListener('pointerup',onU);
+  document.addEventListener('touchmove',onM,{passive:false});
+  document.addEventListener('touchend',onU);
 })();
 
 function setDur(s,el){
   targetDur=s;
-  document.querySelectorAll('.dur-chip').forEach(c=>c.classList.remove('on'));
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
   el.classList.add('on');
-  trimEnd=Math.min(trimStart+s,vidDur);renderTrim();
+  trimE=Math.min(trimS+s,vidDur); renderTrim();
 }
 function setCat(c,el){
   selCat=c;
-  document.querySelectorAll('.cat-card').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.cat').forEach(x=>x.classList.remove('on'));
   el.classList.add('on');
 }
 
 // PROCESS
-async function startProcess(){
-  goStep(3);setPI(1,'active');
-  try{trimmedBlob=await doTrim();}catch(e){trimmedBlob=null;}
-  setPI(1,'done');setPI(2,'active');
-  const key=document.getElementById('apiKeyInput').value.trim();
+async function startProc(){
+  goS(3); setPI(1,'active');
+  await delay(600); setPI(1,'done'); setPI(2,'active');
+
+  const key=document.getElementById('apiKey').value.trim();
   if(key){
-    try{const r=await claudeCap(key);genCaption=r.caption;genHash=r.hashtags;}
-    catch{genCaption=fbCap();genHash=fbHash();}
-  }else{await new Promise(r=>setTimeout(r,800));genCaption=fbCap();genHash=fbHash();}
-  setPI(2,'done');setPI(3,'active');
-  await new Promise(r=>setTimeout(r,600));
-  setPI(3,'done');
-  await new Promise(r=>setTimeout(r,350));
+    try{const r=await claudeCap(key);genCap=r.caption;genHash=r.hashtags;}
+    catch{genCap=fbCap();genHash=fbHash();}
+  } else {
+    await delay(900); genCap=fbCap(); genHash=fbHash();
+  }
+  setPI(2,'done'); setPI(3,'active');
+  await delay(500); setPI(3,'done');
+  await delay(350);
   showDone();
 }
-function setPI(n,s){document.getElementById('pi'+n).className='proc-item '+s;}
 
-// TRIM (MediaRecorder)
-function doTrim(){
-  return new Promise((res,rej)=>{
-    const vid=document.getElementById('previewVid');
-    const cvs=document.getElementById('cvs');
-    cvs.width=vid.videoWidth||720;cvs.height=vid.videoHeight||1280;
-    const ctx=cvs.getContext('2d');
-    let stream;try{stream=cvs.captureStream(30);}catch(e){rej(e);return;}
-    const mime=MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
-      ?'video/webm;codecs=vp9':MediaRecorder.isTypeSupported('video/webm')
-      ?'video/webm':'video/mp4';
-    let rec;try{rec=new MediaRecorder(stream,{mimeType:mime});}catch(e){rej(e);return;}
-    const chunks=[];
-    rec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
-    rec.onstop=()=>res(new Blob(chunks,{type:mime}));
-    vid.muted=true;vid.playbackRate=1;
-    let raf;
-    function draw(){
-      if(vid.currentTime>=trimEnd||vid.ended){vid.pause();cancelAnimationFrame(raf);rec.stop();return;}
-      ctx.drawImage(vid,0,0,cvs.width,cvs.height);raf=requestAnimationFrame(draw);
-    }
-    vid.onseeked=()=>{rec.start();vid.play();draw();};
-    vid.currentTime=trimStart;
-  });
-}
+function setPI(n,s){document.getElementById('pi'+n).className='pi '+s;}
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
 
 // CLAUDE API
 async function claudeCap(key){
-  const dur=(trimEnd-trimStart).toFixed(1);
+  const dur=(trimE-trimS).toFixed(1);
   const p=`SNSマーケターとして以下の条件でTikTok・Reels向け日本語キャプションをJSONのみで出力してください。\n業種:${selCat} 動画:${dur}秒\n{"caption":"2〜3行（絵文字入り）","hashtags":"#タグ1 #タグ2 #タグ3 #タグ4 #タグ5"}`;
   const r=await fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:p}]})
   });
-  if(!r.ok)throw new Error(r.status);
+  if(!r.ok) throw new Error(r.status);
   const d=await r.json();
   return JSON.parse(d.content[0].text.replace(/```json|```/g,'').trim());
 }
 
-// FALLBACKS
+// FALLBACK
 const CAPS={
   '飲食':{cap:'今日も美味しいものを作りました😋\nこだわりの一皿、ぜひ食べに来てください！',hash:'#グルメ #飲食店 #おいしい #ランチ #ショート動画'},
   '美容':{cap:'今日のスタイリングをご紹介✂️✨\nご予約お待ちしています！',hash:'#美容室 #ヘアスタイル #サロン #おしゃれ #ビューティー'},
-  '製造':{cap:'職人の技、ここにあり🔧\n毎日の積み重ねが最高の品質を生む。',hash:'#製造業 #ものづくり #職人 #技術 #メイドインジャパン'},
+  '製造業':{cap:'職人の技、ここにあり🔧\n毎日の積み重ねが最高の品質を生む。',hash:'#製造業 #ものづくり #職人 #技術 #メイドインジャパン'},
   '日常':{cap:'何気ない日常が、実は一番たいせつ🌸\nこんな毎日が好きです。',hash:'#日常vlog #暮らし #ゆるい日常 #日記 #ショート'},
   'ビジネス':{cap:'仕事の現場から💪\n小さな積み重ねが、大きな変化を生みます。',hash:'#ビジネス #仕事 #中小企業 #成長記録 #毎日投稿'},
   'その他':{cap:'この瞬間をみんなにシェアしたくて📱✨\nぜひ最後まで見てください！',hash:'#ショート動画 #バズれ #シェア #毎日投稿 #おすすめ'}
@@ -825,41 +533,50 @@ const CAPS={
 function fbCap(){return(CAPS[selCat]||CAPS['その他']).cap;}
 function fbHash(){return(CAPS[selCat]||CAPS['その他']).hash;}
 
-// DONE
+// SHOW DONE
 function showDone(){
-  goStep(4);
-  document.getElementById('capText').textContent=genCaption;
-  document.getElementById('hashText').textContent=genHash;
-  document.getElementById('doneMsg').textContent=`${selCat}向け ${(trimEnd-trimStart).toFixed(1)}秒動画が完成 🎬`;
-  const btn=document.getElementById('dlBtn');
-  btn.disabled=!trimmedBlob;
-  if(!trimmedBlob)btn.textContent='⚠ このブラウザではDL非対応';
-}
+  goS(4);
+  const dur=(trimE-trimS).toFixed(1);
+  const sLabel=fmt(trimS)+' 〜 '+fmt(trimE);
 
-// DOWNLOAD
-function doDownload(){
-  if(!trimmedBlob)return;
-  const ext=trimmedBlob.type.includes('mp4')?'mp4':'webm';
-  const url=URL.createObjectURL(trimmedBlob);
-  const a=document.createElement('a');
-  a.href=url;a.download=`gyutto_${Date.now()}.${ext}`;a.click();
-  URL.revokeObjectURL(url);
-  toast('✅ ダウンロード開始！');
+  document.getElementById('cutRange').textContent=sLabel;
+  document.getElementById('cutSub').textContent='動画の '+trimS.toFixed(1)+'秒目 から '+trimE.toFixed(1)+'秒目 を使用';
+  document.getElementById('cutDur').textContent=dur+'秒（'+targetDur+'秒版）';
+  document.getElementById('ccRange').textContent=sLabel;
+  document.getElementById('capText').textContent=genCap;
+  document.getElementById('hashText').textContent=genHash;
+  document.getElementById('doneMsg').textContent=selCat+'向け '+dur+'秒の設計図ができました 🎬';
 }
 
 // COPY
-function copyCaption(){
-  navigator.clipboard.writeText(genCaption+'\n\n'+genHash).then(()=>toast('📋 コピーしました！'));
+function copyAll(){
+  const text=genCap+'\n\n'+genHash;
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 コピーしました！CapCutで使ってください'));
+}
+
+// CAPCUT
+function openCapCut(){
+  // CapCutのDeep Link（インストール済みなら起動）
+  window.location.href='capcut://';
+  setTimeout(()=>{
+    // フォールバック：App Store / Play Store
+    const ua=navigator.userAgent;
+    if(/android/i.test(ua)){
+      window.open('https://play.google.com/store/apps/details?id=com.lemon.lvoverseas','_blank');
+    } else {
+      window.open('https://apps.apple.com/app/capcut/id1500855883','_blank');
+    }
+  },1500);
 }
 
 // TOAST
-function toast(msg){
+function showToast(msg){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2400);
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
 }
 
-goStep(1);
+goS(1);
 </script>
 </body>
 </html>
